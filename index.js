@@ -18,13 +18,23 @@ app.use('/api/auth', authRoutes);
 
 // Health Check Route
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'Server is running' });
+  res.json({
+    status: 'Server is running'
+  });
 });
 
 // Protected Route
 app.get('/api/protected', authMiddleware, (req, res) => {
   res.json({
     message: 'You accessed a protected route!',
+    user: req.user
+  });
+});
+
+// Hello Route (Protected)
+app.get('/hello', authMiddleware, (req, res) => {
+  res.json({
+    message: 'Hello! You have successfully accessed a protected route.',
     user: req.user
   });
 });
