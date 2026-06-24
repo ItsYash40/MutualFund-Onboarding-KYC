@@ -47,6 +47,10 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    passwordResetVerified: {
+      type: Boolean,
+      default: false,
+    },
 
     resetOtp: String,
 

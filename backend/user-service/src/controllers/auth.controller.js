@@ -238,6 +238,8 @@ export const verifyResetOtp = async (req, res) => {
         message: "Invalid OTP",
       });
     }
+    user.passwordResetVerified = true;
+    await user.save();
 
     return res.status(200).json({
       success: true,
@@ -267,10 +269,15 @@ export const resetPassword = async (req, res) => {
       });
     }
 
-    user.password = await hashPassword(newPassword);
+    if (!user.passwordResetVerified) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP verification required",
+      });
+    }
 
+    user.passwordResetVerified = false;
     user.resetOtp = null;
-
     user.resetOtpExpiry = null;
 
     await user.save();
