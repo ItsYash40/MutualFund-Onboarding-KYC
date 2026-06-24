@@ -6,11 +6,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      minlength: 2,
+      maxlength: 50,
     },
 
     lastName: {
       type: String,
       trim: true,
+      maxlength: 50,
     },
 
     email: {
@@ -31,6 +34,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+      select: false,
     },
 
     role: {
@@ -44,19 +48,15 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
 
-    resetOtp: {
-      type: String,
-      default: null,
-    },
+    resetOtp: String,
 
-    resetOtpExpiry: {
-      type: Date,
-      default: null,
-    },
+    resetOtpExpiry: Date,
   },
   {
     timestamps: true,
   }
 );
 
-module.exports = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+
+export default User;
