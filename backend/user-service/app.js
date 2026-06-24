@@ -3,6 +3,9 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import authRoutes from "./src/routes/auth.routes.js";
+import errorMiddleware from "./src/middlewares/error.middleware.js";
+import { error } from "node:console";
 
 const app = express();
 
@@ -18,5 +21,8 @@ app.get("/health", (req, res) => {
     status: "UP",
   });
 });
+
+app.use("/api/auth", authRoutes);
+app.use(errorMiddleware);
 
 export default app;

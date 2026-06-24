@@ -1,15 +1,13 @@
-import User from "../models/User.js";
-import { hashPassword } from "../services/password.service.js";
+import User from "../models/user.model.js";
+import { hashPassword, comparePassword } from "../service/password.service.js";
 import RefreshToken from "../models/RefreshToken.js";
 import jwt from "jsonwebtoken";
 import generateOtp from "../utils/generateOtp.js";
 
-import { comparePassword, hashPassword } from "../services/password.service.js";
-
 import {
   generateAccessToken,
   generateRefreshToken,
-} from "../services/jwt.service.js";
+} from "../service/jwt.service.js";
 
 // register
 export const register = async (req, res) => {
@@ -79,9 +77,10 @@ export const login = async (req, res) => {
         message: "Invalid credentials",
       });
     }
+    user.lastLogin = new Date();
+    await user.save();
 
     const accessToken = generateAccessToken(user);
-
     const refreshToken = generateRefreshToken(user);
 
     await RefreshToken.create({
@@ -123,10 +122,8 @@ export const getProfile = async (req, res) => {
 // logout
 export const logout = async (req, res) => {
   try {
-    const { refreshToken } = req.body;
-
-    await RefreshToken.deleteOne({
-      token: refreshToken,
+    await RefreshToken.deleteMany({
+      userId: req.user.userId,
     });
 
     return res.status(200).json({
@@ -205,8 +202,7 @@ export const forgotPassword = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "OTP generated successfully",
-      otp,
+      message: "If account exists, OTP has been sent!",
     });
   } catch (error) {
     return res.status(500).json({

@@ -6,14 +6,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      minlength: 2,
-      maxlength: 50,
     },
 
     lastName: {
       type: String,
       trim: true,
-      maxlength: 50,
     },
 
     email: {
@@ -47,14 +44,31 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    resetOtp: {
+      type: String,
+      default: null,
+    },
+
+    resetOtpExpiry: {
+      type: Date,
+      default: null,
+    },
+
     passwordResetVerified: {
       type: Boolean,
       default: false,
     },
 
-    resetOtp: String,
+    lastLogin: {
+      type: Date,
+      default: null,
+    },
 
-    resetOtpExpiry: Date,
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,
