@@ -12,7 +12,8 @@ Finboard is a full-stack fintech simulation for authentication, profile completi
 - Bank verification simulation with Rs. 2 debit and automatic refund.
 - KYC submission with PAN/Aadhaar manual fields, document upload, OCR hooks, and admin review.
 - Admin dashboard for reviewing users, uploaded documents, OCR output, KYC status, and approval/rejection.
-- Stock market simulation with search, stock detail pages, buy flow, holdings, orders, and portfolio value.
+- RTA and AMC admin role simulation with seeded logins.
+- Stock and mutual fund marketplace with search, paginated listings, detail pages, buy flow, SIP flow, holdings, orders, and portfolio value.
 
 ## Project Structure
 
@@ -48,7 +49,7 @@ Finboard is a full-stack fintech simulation for authentication, profile completi
 - Auth database: MongoDB Atlas or local MongoDB.
 - Banking database: PostgreSQL on Supabase, accessed through Prisma.
 - OTP: Backend-generated OTP with optional Twilio SMS delivery.
-- OCR/KYC hooks: Mistral OCR and OpenRouter-compatible model integration.
+- OCR/KYC hooks: Tesseract.js local OCR and OpenRouter-compatible structured extraction.
 
 ## Prerequisites
 
@@ -57,7 +58,7 @@ Finboard is a full-stack fintech simulation for authentication, profile completi
 - MongoDB Atlas database or local MongoDB.
 - Supabase PostgreSQL project for the banking module.
 - Optional Twilio account if you want SMS delivery.
-- Optional Mistral/OpenRouter keys for OCR extraction.
+- Optional OpenRouter key for structured OCR extraction. Tesseract.js runs locally.
 
 ## First-Time Setup
 
@@ -115,7 +116,6 @@ TWILIO_SHOW_OTP_IN_RESPONSE=true
 KYC OCR:
 
 ```env
-MISTRAL_API_KEY=
 OPENROUTER_API_KEY=
 OPENROUTER_MODEL=openai/gpt-4o-mini
 ```
@@ -200,6 +200,14 @@ Password: Admin@12345
 
 Email: ops.admin@finboard.local
 Password: OpsAdmin@12345
+
+Email: rta.admin@finboard.local
+Password: RtaAdmin@12345
+Role: RTA Admin
+
+Email: amc.admin@finboard.local
+Password: AmcAdmin@12345
+Role: AMC Admin
 ```
 
 Change these before using the project outside local demo mode.
@@ -289,7 +297,7 @@ User KYC includes:
 - PAN card upload.
 - Aadhaar card upload.
 
-The backend checks whether the entered PAN/Aadhaar/name exists in the dummy identity dataset. OCR output is stored with the KYC application and shown in the admin dashboard. The admin can approve or reject the submission after reviewing user-entered values, database values, OCR values, and uploaded documents.
+The backend checks whether the entered PAN/Aadhaar/name exists in the dummy identity dataset. Uploaded PAN and Aadhaar images are read with Tesseract.js, then the raw OCR text is sent to OpenRouter to extract clean name, PAN number, and Aadhaar number fields. Raw OCR text and structured extracted values are stored with the KYC application and shown in the admin dashboard. The admin can approve or reject the submission after reviewing user-entered values, database values, OCR values, and uploaded documents.
 
 KYC routes:
 
@@ -324,10 +332,13 @@ Bank verification:
 
 Investment simulation includes:
 
-- Stock and mutual fund style dashboard.
+- Stock and mutual fund marketplace dashboard.
 - Searchable instruments.
-- Stock detail pages.
-- Buy panel.
+- Paginated stock and fund lists.
+- Stock and fund detail pages with history, performance, facts, and order panel.
+- Stock buy panel.
+- Mutual fund lump-sum order panel.
+- SIP creation with monthly amount, SIP date, folio number, and next debit date.
 - Portfolio and holdings.
 - Orders/transactions.
 
@@ -341,9 +352,13 @@ Buying a stock requires:
 When a buy succeeds:
 
 - Money is deducted from the linked dummy bank account.
+- Stock orders route toward a simulated listed-company treasury account.
+- Mutual fund and SIP orders route toward a simulated AMC collection account.
 - Holding/order is stored in MongoDB.
 - Portfolio value updates.
 - Notification is created.
+
+AMC admin can review fund and SIP orders and update order status.
 
 ## Admin Dashboard
 
@@ -359,7 +374,13 @@ Use an admin account. Admin users are redirected to:
 /admin/dashboard
 ```
 
-Admin dashboard includes:
+Admin login includes a role selector:
+
+- RTA Admin: KYC, OCR review, investor record management.
+- AMC Admin: fund order book, SIP book, AUM, scheme analytics.
+- Super Admin: can access both admin modules.
+
+RTA dashboard includes:
 
 - Admin profile summary.
 - User/KYC application list.
@@ -368,6 +389,15 @@ Admin dashboard includes:
 - Uploaded PAN/Aadhaar document preview links.
 - OCR extracted text.
 - Approve/reject actions.
+
+AMC dashboard includes:
+
+- Total AUM.
+- Monthly SIP book.
+- Investor count.
+- Pending fund orders.
+- Mutual fund and SIP order review.
+- Investor stock activity visibility.
 
 ## Useful Scripts
 

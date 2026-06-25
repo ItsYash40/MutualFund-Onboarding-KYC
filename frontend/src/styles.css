@@ -1618,6 +1618,18 @@ select:focus {
   cursor: not-allowed;
 }
 
+.card-action-link {
+  min-height: 34px;
+  border: 1px solid #02c39a;
+  border-radius: 8px;
+  background: #02c39a;
+  color: #04100c;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .compact-note {
   margin-bottom: 10px;
 }
@@ -1734,6 +1746,25 @@ select:focus {
 
 .market-card {
   min-height: 220px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 180ms ease, border-color 180ms ease;
+}
+
+.market-card::after {
+  content: "";
+  position: absolute;
+  inset: auto -40px -40px auto;
+  width: 110px;
+  height: 110px;
+  border-radius: 999px;
+  background: rgba(2, 195, 154, 0.08);
+  pointer-events: none;
+}
+
+.market-card:hover {
+  transform: translateY(-3px);
+  border-color: #164d42;
 }
 
 .market-left .stock-grid {
@@ -1910,6 +1941,35 @@ select:focus {
   margin: 0;
   text-align: right;
   font-weight: 900;
+}
+
+.pagination-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.pagination-bar button {
+  min-width: 38px;
+  min-height: 34px;
+  border: 1px solid #2b333d;
+  border-radius: 8px;
+  background: #101215;
+  color: #f4f8fb;
+}
+
+.pagination-bar button.active {
+  background: #02c39a;
+  border-color: #02c39a;
+  color: #06100d;
+  font-weight: 900;
+}
+
+.pagination-bar button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .up {
@@ -2239,6 +2299,41 @@ select:focus {
   overflow: hidden;
 }
 
+.instrument-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.instrument-facts > div,
+.amc-routing-box {
+  border: 1px solid #273039;
+  border-radius: 8px;
+  background: #12161a;
+  padding: 13px;
+}
+
+.instrument-facts span,
+.amc-routing-box span {
+  display: block;
+  color: #9ca6b2;
+  font-size: 12px;
+}
+
+.instrument-facts strong,
+.amc-routing-box strong {
+  display: block;
+  margin-top: 5px;
+  overflow-wrap: anywhere;
+}
+
+.amc-routing-box p {
+  margin: 6px 0 0;
+  color: #aab3bd;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .order-head,
 .order-tabs,
 .order-form {
@@ -2276,6 +2371,136 @@ select:focus {
 .order-warning {
   margin: 0;
   color: #ffb86b;
+}
+
+.admin-login-hints {
+  margin-top: 18px;
+  border: 1px solid #273039;
+  border-radius: 8px;
+  background: #12161a;
+  padding: 14px;
+  display: grid;
+  gap: 8px;
+  color: #b8c3ce;
+}
+
+.admin-login-hints strong {
+  color: #f4f8fb;
+}
+
+.amc-layout {
+  width: min(1360px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0 64px;
+  display: grid;
+  gap: 18px;
+}
+
+.amc-hero {
+  min-height: 220px;
+  border: 1px solid #273039;
+  border-radius: 8px;
+  padding: clamp(24px, 5vw, 46px);
+  display: flex;
+  align-items: center;
+  background:
+    radial-gradient(circle at 78% 25%, rgba(2, 195, 154, 0.16), transparent 28%),
+    linear-gradient(135deg, rgba(73, 99, 255, 0.12), transparent 48%),
+    #101316;
+}
+
+.amc-hero p,
+.amc-hero span {
+  color: #9ca6b2;
+  margin: 0;
+}
+
+.amc-hero h1 {
+  max-width: 860px;
+  margin: 8px 0 12px;
+  font-size: clamp(32px, 5vw, 56px);
+  line-height: 1;
+}
+
+.amc-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.7fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.amc-order-list,
+.amc-stock-list {
+  display: grid;
+  gap: 12px;
+}
+
+.amc-order-card {
+  border: 1px solid #273039;
+  border-radius: 8px;
+  background: #12161a;
+  padding: 14px;
+  display: grid;
+  grid-template-columns: minmax(180px, 1.2fr) minmax(160px, 1fr) minmax(160px, 1fr) minmax(120px, 0.7fr) auto;
+  gap: 14px;
+  align-items: center;
+}
+
+.amc-order-card span,
+.amc-order-card p {
+  display: block;
+  margin: 5px 0 0;
+  color: #9ca6b2;
+  overflow-wrap: anywhere;
+}
+
+.amc-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.amc-actions button {
+  min-height: 34px;
+  border: 1px solid #2e3741;
+  border-radius: 8px;
+  background: #151a1f;
+  color: #f4f8fb;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.amc-actions button:first-child {
+  background: #02c39a;
+  border-color: #02c39a;
+  color: #04100c;
+  font-weight: 900;
+}
+
+.amc-stock-list > div {
+  min-height: 62px;
+  display: grid;
+  grid-template-columns: 72px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  border-top: 1px solid #252a30;
+}
+
+.amc-stock-list > div:first-child {
+  border-top: 0;
+}
+
+.amc-stock-list span {
+  color: #9ca6b2;
+}
+
+.amc-stock-list em {
+  color: #02c39a;
+  font-style: normal;
+  font-weight: 900;
 }
 
 .admin-shell .review-value-table {
@@ -2320,5 +2545,387 @@ select:focus {
 
   .order-panel {
     position: static;
+  }
+
+  .instrument-facts,
+  .amc-grid,
+  .amc-order-card {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Finboard visual refresh */
+:root {
+  background: #080b12;
+  color: #f6f2e8;
+}
+
+body,
+.app-surface,
+.admin-shell {
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    #080b12;
+  background-size: 42px 42px;
+}
+
+.topbar {
+  height: 72px;
+  padding: 0 clamp(18px, 7vw, 112px);
+  border-top: 0;
+  border-bottom: 1px solid rgba(231, 191, 108, 0.18);
+  background: rgba(8, 11, 18, 0.92);
+  backdrop-filter: blur(18px);
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 950;
+  letter-spacing: 0;
+}
+
+.brand-word {
+  display: inline-block;
+  color: #f6f2e8;
+}
+
+.logo span,
+.footer-logo span,
+.brand-mark {
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, #e7bf6c 0%, #41d6c3 58%, #6e7cff 100%);
+}
+
+.logo span {
+  width: 34px;
+  height: 34px;
+}
+
+.market-nav {
+  align-items: center;
+  gap: 8px;
+  color: #b6bdc9;
+}
+
+.market-nav a {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 0 12px;
+}
+
+.market-nav a.active,
+.market-nav a[aria-current="page"] {
+  color: #f6f2e8;
+  border-color: rgba(231, 191, 108, 0.28);
+  background: rgba(231, 191, 108, 0.08);
+}
+
+.search-box {
+  height: 44px;
+  border-color: rgba(65, 214, 195, 0.18);
+  background: #0d1320;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.avatar-link {
+  background: #263145;
+  color: #e7bf6c;
+}
+
+.badge {
+  background: #e85d4f;
+}
+
+.market-ticker {
+  height: 42px;
+  border-bottom-color: rgba(65, 214, 195, 0.15);
+  background: #0e1421;
+}
+
+.market-ticker em,
+.up,
+.tool-list span,
+.popover-header a,
+.switch-link a {
+  color: #41d6c3;
+}
+
+.market-layout,
+.banking-layout,
+.profile-layout,
+.stock-detail-layout {
+  width: min(1240px, calc(100% - 32px));
+}
+
+.market-hero-panel,
+.bank-hero {
+  min-height: 260px;
+  border: 1px solid rgba(231, 191, 108, 0.16);
+  border-radius: 8px;
+  padding: clamp(24px, 5vw, 54px);
+  margin-bottom: 20px;
+  background:
+    linear-gradient(135deg, rgba(231, 191, 108, 0.14), transparent 42%),
+    linear-gradient(90deg, rgba(65, 214, 195, 0.08), rgba(110, 124, 255, 0.08)),
+    #0c111d;
+  position: relative;
+  overflow: hidden;
+}
+
+.market-hero-panel::after,
+.bank-hero::after {
+  content: "";
+  position: absolute;
+  inset: auto 28px 24px auto;
+  width: min(380px, 36vw);
+  height: 110px;
+  border: 1px solid rgba(65, 214, 195, 0.18);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, transparent, rgba(65, 214, 195, 0.14), transparent),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 1px, transparent 1px 22px);
+  opacity: 0.8;
+}
+
+.market-hero-panel h1,
+.bank-hero h1 {
+  max-width: 760px;
+  color: #fff8e8;
+}
+
+.market-hero-panel p,
+.bank-hero p,
+.section-heading p {
+  color: #e7bf6c;
+  font-weight: 800;
+}
+
+.metric-card,
+.chart-panel,
+.watchlist-panel,
+.profile-sidebar,
+.profile-card,
+.bank-panel,
+.bank-setup,
+.balance-card,
+.order-panel,
+.admin-panel,
+.admin-stat {
+  border-color: rgba(141, 154, 174, 0.2);
+  background: rgba(12, 17, 29, 0.92);
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.18);
+}
+
+.metric-card,
+.stock-card,
+.watchlist-panel,
+.bank-panel {
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.metric-card:hover,
+.stock-card:hover,
+.watchlist-panel:hover,
+.bank-panel:hover {
+  transform: translateY(-2px);
+  border-color: rgba(65, 214, 195, 0.28);
+}
+
+.metric-icon {
+  color: #e7bf6c;
+  background: rgba(231, 191, 108, 0.1);
+}
+
+.live-pill {
+  color: #e7bf6c;
+  border-color: rgba(231, 191, 108, 0.24);
+  background: rgba(231, 191, 108, 0.08);
+}
+
+.stock-card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent),
+    #101724;
+}
+
+.stock-symbol,
+.search-popover span,
+.stock-symbol.large {
+  background: #e8edf5;
+  color: #0a0f19;
+}
+
+.primary-button,
+.card-action-link,
+.pagination-bar button.active,
+.segmented button.active,
+.amc-actions button:first-child {
+  background: #e7bf6c;
+  border-color: #e7bf6c;
+  color: #10100b;
+}
+
+.primary-button:hover,
+.card-action-link:hover {
+  background: #f0cc83;
+}
+
+.secondary-button,
+.inline-action button,
+.segmented button,
+.pagination-bar button,
+.table-link-button,
+.dummy-account button,
+.transaction-row button {
+  border-color: rgba(141, 154, 174, 0.25);
+  background: #111a2a;
+}
+
+.sparkline span,
+.sector-bar span {
+  background: #41d6c3;
+}
+
+.down,
+.stock-card p.down,
+.transaction-row .down,
+.transaction-row strong.down {
+  color: #ff806f;
+}
+
+.sparkline.down span,
+.sector-bar em {
+  background: #ff806f;
+}
+
+.profile-popover,
+.notification-popover,
+.search-popover {
+  border-color: rgba(231, 191, 108, 0.2);
+  background: #0d1320;
+}
+
+.large-chart polyline {
+  stroke: #e7bf6c;
+}
+
+.performance-line {
+  background: linear-gradient(90deg, #ff806f, #e7bf6c, #41d6c3);
+}
+
+.site-footer {
+  border-top: 1px solid rgba(231, 191, 108, 0.16);
+  background:
+    linear-gradient(180deg, rgba(15, 22, 36, 0.92), #080b12),
+    #080b12;
+  margin-top: 28px;
+}
+
+.footer-inner {
+  width: min(1240px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 46px 0 30px;
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(420px, 1.3fr);
+  gap: clamp(28px, 7vw, 82px);
+}
+
+.footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
+}
+
+.footer-logo span {
+  width: 34px;
+  height: 34px;
+}
+
+.footer-brand p {
+  max-width: 520px;
+  color: #aeb8c7;
+  line-height: 1.7;
+}
+
+.footer-status-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.footer-status-grid span {
+  border: 1px solid rgba(65, 214, 195, 0.18);
+  border-radius: 8px;
+  background: rgba(65, 214, 195, 0.07);
+  color: #d8fff8;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.footer-links {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.footer-links div {
+  display: grid;
+  gap: 10px;
+}
+
+.footer-links strong {
+  color: #fff8e8;
+}
+
+.footer-links a {
+  color: #aeb8c7;
+}
+
+.footer-links a:hover {
+  color: #e7bf6c;
+}
+
+.footer-bottom {
+  width: min(1240px, calc(100% - 32px));
+  margin: 0 auto;
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-top: 1px solid rgba(141, 154, 174, 0.16);
+  color: #8f9bad;
+  font-size: 13px;
+}
+
+@media (max-width: 900px) {
+  .brand-word {
+    display: none;
+  }
+
+  .market-hero-panel::after,
+  .bank-hero::after {
+    display: none;
+  }
+
+  .footer-inner,
+  .footer-links {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 16px 0;
   }
 }

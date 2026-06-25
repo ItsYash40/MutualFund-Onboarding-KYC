@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const auditLogSchema = new mongoose.Schema(
   {
     actorId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    actorRole: { type: String, enum: ["user", "admin", "system"], default: "system" },
+    actorRole: { type: String, enum: ["user", "admin", "rta_admin", "amc_admin", "system"], default: "system" },
     action: { type: String, required: true },
     resourceType: { type: String, required: true },
     resourceId: String,
@@ -15,4 +15,3 @@ const auditLogSchema = new mongoose.Schema(
 );
 
 export const AuditLog = mongoose.model("AuditLog", auditLogSchema);
-

@@ -469,7 +469,7 @@ export async function resetAccountBalance(accountId, balance) {
   });
 }
 
-export async function debitForInvestment(appUserId, amountValue, description) {
+export async function debitForInvestment(appUserId, amountValue, description, targetAccount = null) {
   const amount = toDecimal(amountValue);
 
   return prisma.$transaction(async (tx) => {
@@ -494,11 +494,12 @@ export async function debitForInvestment(appUserId, amountValue, description) {
         transactionRef: generateTransactionRef("INV"),
         senderId: account.id,
         senderAccountNumber: account.accountNumber,
+        receiverAccountNumber: targetAccount?.accountNumber,
         amount,
         type: "DEBIT",
         status: "SUCCESS",
         description: "Stock Investment Debit",
-        remarks: description,
+        remarks: targetAccount ? `${description}. Destination: ${targetAccount.accountHolder} (${targetAccount.accountNumber})` : description,
         appUserId
       }
     });

@@ -6,13 +6,29 @@ const admins = [
     name: process.env.ADMIN_NAME || "KYC Review Admin",
     email: process.env.ADMIN_EMAIL || "admin@finboard.local",
     phone: process.env.ADMIN_PHONE || "+910000000001",
-    password: process.env.ADMIN_PASSWORD || "Admin@12345"
+    password: process.env.ADMIN_PASSWORD || "Admin@12345",
+    role: "admin"
   },
   {
     name: process.env.ADMIN2_NAME || "Operations Admin",
     email: process.env.ADMIN2_EMAIL || "ops.admin@finboard.local",
     phone: process.env.ADMIN2_PHONE || "+910000000002",
-    password: process.env.ADMIN2_PASSWORD || "OpsAdmin@12345"
+    password: process.env.ADMIN2_PASSWORD || "OpsAdmin@12345",
+    role: "admin"
+  },
+  {
+    name: process.env.RTA_ADMIN_NAME || "RTA Investor Records Admin",
+    email: process.env.RTA_ADMIN_EMAIL || "rta.admin@finboard.local",
+    phone: process.env.RTA_ADMIN_PHONE || "+910000000003",
+    password: process.env.RTA_ADMIN_PASSWORD || "RtaAdmin@12345",
+    role: "rta_admin"
+  },
+  {
+    name: process.env.AMC_ADMIN_NAME || "AMC Scheme Manager",
+    email: process.env.AMC_ADMIN_EMAIL || "amc.admin@finboard.local",
+    phone: process.env.AMC_ADMIN_PHONE || "+910000000004",
+    password: process.env.AMC_ADMIN_PASSWORD || "AmcAdmin@12345",
+    role: "amc_admin"
   }
 ];
 
@@ -25,7 +41,7 @@ async function seedAdminUser() {
     if (user) {
       user.name = admin.name;
       user.phone = admin.phone;
-      user.role = "admin";
+      user.role = admin.role;
       user.phoneVerified = true;
       await user.setPassword(admin.password);
       await user.save();
@@ -35,7 +51,7 @@ async function seedAdminUser() {
         name: admin.name,
         email: admin.email,
         phone: admin.phone,
-        role: "admin",
+        role: admin.role,
         phoneVerified: true
       });
       await created.setPassword(admin.password);
@@ -48,6 +64,7 @@ async function seedAdminUser() {
   admins.forEach((admin) => {
     console.log(`Email: ${admin.email}`);
     console.log(`Password: ${admin.password}`);
+    console.log(`Role: ${admin.role}`);
   });
   await disconnectDb();
 }

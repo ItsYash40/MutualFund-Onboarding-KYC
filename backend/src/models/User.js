@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["user", "admin"],
+      enum: ["user", "admin", "rta_admin", "amc_admin"],
       default: "user",
       index: true
     },
@@ -78,4 +78,3 @@ userSchema.methods.toSafeJSON = function toSafeJSON() {
 };
 
 export const User = mongoose.model("User", userSchema);
-

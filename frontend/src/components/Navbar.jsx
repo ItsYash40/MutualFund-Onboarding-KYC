@@ -3,7 +3,7 @@ import { Bell, ChevronRight, FileCheck2, Landmark, LogOut, Search, Settings, Use
 import { useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { bankingApi } from "../lib/bankingApi.js";
-import { instruments, tabs } from "../lib/marketData.js";
+import { allInstruments } from "../lib/marketData.js";
 import { notificationApi } from "../lib/notificationApi.js";
 import { useAuth } from "../state/AuthContext.jsx";
 
@@ -61,7 +61,7 @@ export default function Navbar() {
     return location.pathname === "/dashboard" && current === key ? "active" : "";
   }
 
-  const searchable = [...instruments, ...tabs.fo.cards];
+  const searchable = allInstruments;
   const searchResults = search.trim()
     ? searchable
         .filter((item) => `${item.name} ${item.symbol}`.toLowerCase().includes(search.trim().toLowerCase()))
@@ -77,6 +77,7 @@ export default function Navbar() {
     <header className="topbar">
       <Link to="/dashboard" className="logo" aria-label="KYC home">
         <span />
+        <strong className="brand-word">Finboard</strong>
       </Link>
       <nav className="market-nav">
         <Link to="/dashboard?market=stocks" className={marketClass("stocks")}>Stocks</Link>
@@ -162,10 +163,17 @@ export default function Navbar() {
             Banking Section
             <ChevronRight size={16} />
           </button>
-          {user?.role === "admin" ? (
+          {["admin", "rta_admin"].includes(user?.role) ? (
             <button type="button" onClick={() => navigate("/admin/kyc")}>
               <ShieldIcon />
-              Admin Review
+              RTA Review
+              <ChevronRight size={16} />
+            </button>
+          ) : null}
+          {["admin", "amc_admin"].includes(user?.role) ? (
+            <button type="button" onClick={() => navigate("/admin/amc")}>
+              <ShieldIcon />
+              AMC Dashboard
               <ChevronRight size={16} />
             </button>
           ) : null}

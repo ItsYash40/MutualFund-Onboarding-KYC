@@ -3,6 +3,7 @@ import { CreditCard, Send } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import Footer from "../components/Footer.jsx";
 import Navbar from "../components/Navbar.jsx";
 import { getApiError } from "../lib/api.js";
 import { bankingApi } from "../lib/bankingApi.js";
@@ -139,6 +140,7 @@ export default function BankingPage() {
           </>
         )}
       </main>
+      <Footer />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { FileCheck2, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import Footer from "../components/Footer.jsx";
 import Navbar from "../components/Navbar.jsx";
 import { getApiError } from "../lib/api.js";
 import { kycApi } from "../lib/kycApi.js";
@@ -91,6 +92,7 @@ export default function KycPage() {
           </article>
         </section>
       </main>
+      <Footer />
     </div>
   );
 }

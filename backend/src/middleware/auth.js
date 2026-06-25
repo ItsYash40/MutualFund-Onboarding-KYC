@@ -25,9 +25,19 @@ export async function requireAuth(req, res, next) {
 }
 
 export function requireAdmin(req, res, next) {
-  if (req.user?.role !== "admin") {
+  if (!["admin", "rta_admin", "amc_admin"].includes(req.user?.role)) {
     return res.status(403).json({ message: "Admin access is required" });
   }
 
   next();
+}
+
+export function requireRole(...roles) {
+  return (req, res, next) => {
+    if (!roles.includes(req.user?.role)) {
+      return res.status(403).json({ message: "This admin role is not allowed to access this module" });
+    }
+
+    next();
+  };
 }

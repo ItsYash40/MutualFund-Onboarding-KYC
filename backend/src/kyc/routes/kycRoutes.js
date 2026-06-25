@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { approveKyc, getKycAdmin, getMyKyc, listKycAdmin, rejectKyc, submitKyc } from "../controllers/kycController.js";
-import { requireAdmin, requireAuth } from "../../middleware/auth.js";
+import { requireAuth, requireRole } from "../../middleware/auth.js";
 import { validate } from "../../middleware/validate.js";
 import { kycUpload } from "../middleware/upload.js";
 import { reviewKycSchema, submitKycSchema } from "../schemas/kycSchemas.js";
@@ -20,8 +20,7 @@ kycRouter.post(
   submitKyc
 );
 
-kycRouter.get("/admin/applications", requireAdmin, listKycAdmin);
-kycRouter.get("/admin/applications/:id", requireAdmin, getKycAdmin);
-kycRouter.post("/admin/applications/:id/approve", requireAdmin, validate(reviewKycSchema), approveKyc);
-kycRouter.post("/admin/applications/:id/reject", requireAdmin, validate(reviewKycSchema), rejectKyc);
-
+kycRouter.get("/admin/applications", requireRole("admin", "rta_admin"), listKycAdmin);
+kycRouter.get("/admin/applications/:id", requireRole("admin", "rta_admin"), getKycAdmin);
+kycRouter.post("/admin/applications/:id/approve", requireRole("admin", "rta_admin"), validate(reviewKycSchema), approveKyc);
+kycRouter.post("/admin/applications/:id/reject", requireRole("admin", "rta_admin"), validate(reviewKycSchema), rejectKyc);

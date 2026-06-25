@@ -19,6 +19,10 @@ export const signinSchema = z.object({
   password: z.string().min(1)
 });
 
+export const adminSigninSchema = signinSchema.extend({
+  adminRole: z.enum(["admin", "rta_admin", "amc_admin"]).optional()
+});
+
 export const phoneLoginSchema = z.object({
   phone: z.string().trim().regex(phoneRegex, "Phone number must be in E.164 format, for example +919876543210"),
   otp: z.string().trim().regex(/^\d{4,8}$/, "OTP must be 4 to 8 digits")

@@ -3,6 +3,7 @@ import { ChevronRight, Landmark, Pencil, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useSearchParams } from "react-router-dom";
+import Footer from "../components/Footer.jsx";
 import Navbar from "../components/Navbar.jsx";
 import { api, getApiError } from "../lib/api.js";
 import { bankingApi } from "../lib/bankingApi.js";
@@ -14,7 +15,7 @@ const menuItems = [
   "Bank Details",
   "Reports",
   "Change Password",
-  "Change Groww PIN",
+  "Change Security PIN",
   "Trading controls",
   "Trading APIs",
   "Sell authorisation mode",
@@ -347,6 +348,7 @@ export default function ProfilePage() {
           )}
         </section>
       </main>
+      <Footer />
     </div>
   );
 }

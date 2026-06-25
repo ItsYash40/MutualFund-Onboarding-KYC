@@ -9,9 +9,10 @@ import {
   ShieldCheck,
   TrendingUp
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useSearchParams } from "react-router-dom";
+import Footer from "../components/Footer.jsx";
 import Navbar from "../components/Navbar.jsx";
 import { api, getApiError } from "../lib/api.js";
 import { bankingApi } from "../lib/bankingApi.js";
@@ -36,8 +37,16 @@ export default function DashboardPage() {
   const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
   const [bankForm, setBankForm] = useState({ accountHolderName: "", accountNumber: "", ifsc: "DEMO0000001" });
+  const [page, setPage] = useState(1);
   const marketKey = searchParams.get("market") || "stocks";
   const market = tabs[marketKey] || tabs.stocks;
+  const pageSize = marketKey === "mutual-funds" ? 6 : 12;
+  const pageCount = Math.max(1, Math.ceil(market.cards.length / pageSize));
+  const visibleCards = market.cards.slice((page - 1) * pageSize, page * pageSize);
+
+  useEffect(() => {
+    setPage(1);
+  }, [marketKey]);
 
   const profileQuery = useQuery({
     queryKey: ["profile-me"],
@@ -106,33 +115,6 @@ export default function DashboardPage() {
       toast.error(getApiError(error));
     }
   });
-
-  const buyStock = useMutation({
-    mutationFn: investmentApi.buy,
-    onSuccess() {
-      toast.success("Investment placed successfully");
-      queryClient.invalidateQueries({ queryKey: ["banking-summary"] });
-      queryClient.invalidateQueries({ queryKey: ["navbar-app-notifications"] });
-      queryClient.invalidateQueries({ queryKey: ["portfolio"] });
-    },
-    onError(error) {
-      toast.error(getApiError(error));
-    }
-  });
-
-  function invest(item) {
-    if (!kycVerified) {
-      toast.error("Complete KYC before investing.");
-      return;
-    }
-
-    if (!account) {
-      toast.error("Complete bank details before investing.");
-      return;
-    }
-
-    buyStock.mutate({ symbol: item.symbol, name: item.name, price: item.price, quantity: 1 });
-  }
 
   return (
     <div className="app-surface">
@@ -206,18 +188,25 @@ export default function DashboardPage() {
                 <span className="live-pill">Mock Market</span>
               </div>
               <div className="stock-grid">
-                {market.cards.map((item) => (
+                {visibleCards.map((item) => (
                   <div className="stock-card market-card" key={item.name}>
                     <div className="stock-symbol">{item.symbol}</div>
                     <Link to={`/stocks/${item.symbol}`}><strong>{item.name}</strong></Link>
-                    <span>{rupee(item.price)}</span>
+                    <span>{item.type === "mutual_fund" ? `${rupee(item.nav)} NAV` : rupee(item.price)}</span>
                     <p className={item.trend}>{item.change}</p>
                     <Sparkline trend={item.trend} />
-                    <button type="button" onClick={() => invest(item)} disabled={!kycVerified || !account}>
-                      {kycVerified && account ? market.button : "Locked"}
-                    </button>
+                    <Link className="card-action-link" to={`/stocks/${item.symbol}`}>{market.button}</Link>
                   </div>
                 ))}
+              </div>
+              <div className="pagination-bar">
+                <button type="button" disabled={page === 1} onClick={() => setPage((value) => Math.max(1, value - 1))}>Prev</button>
+                {Array.from({ length: pageCount }, (_, index) => (
+                  <button className={page === index + 1 ? "active" : ""} type="button" key={index + 1} onClick={() => setPage(index + 1)}>
+                    {index + 1}
+                  </button>
+                ))}
+                <button type="button" disabled={page === pageCount} onClick={() => setPage((value) => Math.min(pageCount, value + 1))}>Next</button>
               </div>
             </section>
 
@@ -239,7 +228,7 @@ export default function DashboardPage() {
                     <span className={String(row[2]).startsWith("-") ? "down" : "up"}>{row[2]}</span>
                     <span>{row[3]}</span>
                     <span>Live</span>
-                    <Link className="table-link-button" to={`/stocks/${market.cards[0]?.symbol || "NGE"}`}>View</Link>
+                    <Link className="table-link-button" to={`/stocks/${row[4] || market.cards[0]?.symbol || "RELI"}`}>View</Link>
                   </div>
                 ))}
               </div>
@@ -311,6 +300,7 @@ export default function DashboardPage() {
           </aside>
         </section>
       </main>
+      <Footer />
     </div>
   );
 }

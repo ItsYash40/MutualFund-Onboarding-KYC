@@ -89,15 +89,19 @@ export async function signin(req, res, next) {
 
 export async function adminSignin(req, res, next) {
   try {
-    const { email, password } = req.body;
+    const { email, password, adminRole } = req.body;
     const user = await User.findOne({ email }).select("+passwordHash");
 
     if (!user || !(await user.comparePassword(password))) {
       return res.status(401).json({ message: "Invalid admin email or password" });
     }
 
-    if (user.role !== "admin") {
+    if (!["admin", "rta_admin", "amc_admin"].includes(user.role)) {
       return res.status(403).json({ message: "This account is not allowed to access the admin dashboard" });
+    }
+
+    if (adminRole && adminRole !== "admin" && user.role !== adminRole) {
+      return res.status(403).json({ message: "Selected admin role does not match this account" });
     }
 
     user.lastLoginAt = new Date();

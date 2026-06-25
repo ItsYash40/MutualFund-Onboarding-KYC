@@ -11,6 +11,7 @@ import AdminLoginPage from "./pages/AdminLoginPage.jsx";
 import DashboardPage from "./pages/DashboardPage.jsx";
 import KycPage from "./pages/KycPage.jsx";
 import AdminKycPage from "./pages/AdminKycPage.jsx";
+import AmcAdminPage from "./pages/AmcAdminPage.jsx";
 import BankingPage from "./pages/BankingPage.jsx";
 import BankingAdminPage from "./pages/BankingAdminPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
@@ -21,8 +22,11 @@ const queryClient = new QueryClient();
 
 function DashboardGate() {
   const { user } = useAuth();
-  if (user?.role === "admin") {
+  if (["admin", "rta_admin"].includes(user?.role)) {
     return <Navigate to="/admin/dashboard" replace />;
+  }
+  if (user?.role === "amc_admin") {
+    return <Navigate to="/admin/amc" replace />;
   }
 
   return <DashboardPage />;
@@ -36,10 +40,14 @@ function ProtectedRoute({ children, requiredRole }) {
   }
 
   if (!token) {
-    return <Navigate to={requiredRole === "admin" ? "/admin/login" : "/signin"} replace />;
+    const needsAdmin = Array.isArray(requiredRole)
+      ? requiredRole.some((role) => ["admin", "rta_admin", "amc_admin"].includes(role))
+      : ["admin", "rta_admin", "amc_admin"].includes(requiredRole);
+    return <Navigate to={needsAdmin ? "/admin/login" : "/signin"} replace />;
   }
 
-  if (requiredRole && user?.role !== requiredRole) {
+  const allowedRoles = Array.isArray(requiredRole) ? requiredRole : requiredRole ? [requiredRole] : [];
+  if (allowedRoles.length && !allowedRoles.includes(user?.role)) {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -85,7 +93,7 @@ createRoot(document.getElementById("root")).render(
               <Route
                 path="/admin/dashboard"
                 element={
-                  <ProtectedRoute requiredRole="admin">
+                  <ProtectedRoute requiredRole={["admin", "rta_admin"]}>
                     <AdminKycPage />
                   </ProtectedRoute>
                 }
@@ -93,8 +101,16 @@ createRoot(document.getElementById("root")).render(
               <Route
                 path="/admin/kyc"
                 element={
-                  <ProtectedRoute requiredRole="admin">
+                  <ProtectedRoute requiredRole={["admin", "rta_admin"]}>
                     <AdminKycPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/amc"
+                element={
+                  <ProtectedRoute requiredRole={["admin", "amc_admin"]}>
+                    <AmcAdminPage />
                   </ProtectedRoute>
                 }
               />
@@ -109,7 +125,7 @@ createRoot(document.getElementById("root")).render(
               <Route
                 path="/banking/admin"
                 element={
-                  <ProtectedRoute requiredRole="admin">
+                  <ProtectedRoute requiredRole={["admin", "rta_admin"]}>
                     <BankingAdminPage />
                   </ProtectedRoute>
                 }
