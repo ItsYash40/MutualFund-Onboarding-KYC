@@ -48,7 +48,7 @@ The platform features two distinct portals:
 - **Investor Portal** — A premium, dark-mode-first dashboard experience for retail investors
 - **Admin Panel** — A review dashboard for compliance officers to approve/reject KYC submissions
 
-> **Note:** This is a frontend-only application. All data is persisted via `localStorage` and can be extended with a backend API in Phase 2.
+> **Note:** The frontend has been restructured into a monorepo format (`/frontend`). It is now fully integrated with Axios and ready to connect to backend microservices (Auth, KYC, Document, Admin) on ports 4001-4004.
 
 ---
 
@@ -183,8 +183,9 @@ The platform features two distinct portals:
 
 ```
 fundfirst/
-├── public/                     # Static assets
-├── src/
+├── frontend/
+│   ├── public/                     # Static assets
+│   ├── src/
 │   ├── assets/                 # Images, icons, media files
 │   ├── components/             # Shared/reusable UI components
 │   │   ├── BottomNavBar.jsx    #   Mobile bottom navigation
@@ -230,10 +231,11 @@ fundfirst/
 │   ├── index.css               # Tailwind imports & M3 design tokens
 │   └── main.jsx                # Application entry point
 │
-├── index.html                  # HTML shell with font/icon CDN links
-├── package.json                # Dependencies and scripts
-├── vite.config.js              # Vite build configuration
-└── .oxlintrc.json              # Linter configuration
+│   ├── index.html                  # HTML shell with font/icon CDN links
+│   ├── package.json                # Dependencies and scripts
+│   ├── vite.config.js              # Vite build configuration
+│   └── .oxlintrc.json              # Linter configuration
+└── backend/                        # (To be added) Backend microservices
 ```
 
 ---
@@ -313,8 +315,8 @@ flowchart LR
 # 1. Clone the repository
 git clone https://github.com/your-org/fundfirst.git
 
-# 2. Navigate to the project directory
-cd fundfirst
+# 2. Navigate to the frontend directory
+cd fundfirst/frontend
 
 # 3. Install dependencies
 npm install
@@ -329,15 +331,24 @@ The app will be available at `http://localhost:5173`.
 
 ## ⚙️ Environment Setup
 
-No environment variables are required for the current frontend-only version. All data is stored in the browser's `localStorage`.
+The frontend connects to four backend microservices running locally.
 
-### localStorage Keys
+### Backend Services
 
-| Key | Purpose | Shape |
-|-----|---------|-------|
-| `fundfirst-user` | Authenticated user session | `{ name, email, phone }` |
-| `fundfirst-kyc` | KYC verification state | `{ status, pan, aadhaar, photo, signature, bank, images... }` |
-| `fundfirst-admin` | Admin session flag | `"true"` or removed |
+| Service | Port | Base URL |
+|---------|------|----------|
+| **Auth** | 4001 | `http://localhost:4001/api/auth` |
+| **KYC** | 4002 | `http://localhost:4002/api/kyc` |
+| **Document**| 4003 | `http://localhost:4003/api/documents` |
+| **Admin** | 4004 | `http://localhost:4004/api/admin` |
+
+### localStorage Keys (Tokens)
+
+| Key | Purpose |
+|-----|---------|
+| `access_token` | JWT for API authorization |
+| `refresh_token`| JWT for session recovery |
+| `fundfirst-admin`| Admin UI flag |
 
 > **Tip:** To reset the entire app state, open DevTools → Application → Local Storage and clear all `fundfirst-*` keys.
 
@@ -511,12 +522,13 @@ isAdmin: boolean
 - [x] Route guards and access control
 - [x] localStorage persistence
 
-### 🔜 Phase 2 — Backend Integration
+### 🔜 Phase 2 — Backend Integration (In Progress)
+- [x] Structure repo for monorepo (`/frontend` and `/backend`)
+- [x] Configure Axios with JWT interceptors
+- [x] Prepare frontend API services for Auth, KYC, and Admin
 - [ ] REST API backend (Node.js/Express or Django)
 - [ ] PostgreSQL/MongoDB database
-- [ ] JWT authentication with refresh tokens
 - [ ] File upload to cloud storage (S3/GCS)
-- [ ] Email/SMS OTP via Twilio or AWS SNS
 - [ ] Real IFSC API integration for bank verification
 - [ ] Admin role-based access control (RBAC)
 

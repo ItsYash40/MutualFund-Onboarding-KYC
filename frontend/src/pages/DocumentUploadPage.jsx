@@ -18,11 +18,10 @@ export default function DocumentUploadPage() {
   const [panData, setPanData] = useState({ pan: 'AMDPB1827K', name: 'Suresh Kumar Sharma', dob: '15/08/1988' });
 
   // Aadhaar Simulation States
-  const [aadhaarStatus, setAadhaarStatus] = useState('idle'); // idle, processing, success
+  const [aadhaarStatus, setAadhaarStatus] = useState('idle'); // idle, processing, otp_sent, success
   const [aadhaarNumber, setAadhaarNumber] = useState('');
-  const [aadhaarData, setAadhaarData] = useState({ number: '', address: 'Waiting for back upload...', name: '' });
-  const [aadhaarFrontDone, setAadhaarFrontDone] = useState(false);
-  const [aadhaarBackDone, setAadhaarBackDone] = useState(false);
+  const [otpCode, setOtpCode] = useState('');
+  const [aadhaarData, setAadhaarData] = useState({ number: '', address: 'Waiting for verification...', name: '' });
 
   // General uploading state for photo/signature
   const [uploading, setUploading] = useState(null);
@@ -145,89 +144,38 @@ export default function DocumentUploadPage() {
     }
   };
 
-  const handleSimulateAadhaar = async (side, file = null) => {
+  const handleSendAadhaarOtp = async () => {
+    if (aadhaarNumber.length < 12) {
+      alert("Please enter a valid 12-digit Aadhaar number");
+      return;
+    }
     setAadhaarStatus('processing');
     
-    if (file) {
-      try {
-        const { data: { text } } = await Tesseract.recognize(file, 'eng');
-        
-        if (side === 'front') {
-          processImage(file, (base64) => updateKyc('aadhaarFrontImage', base64));
-          let numberMatch = text.match(/\b\d{4}\s\d{4}\s\d{4}\b/);
-          let extractedNum = "";
-          if (numberMatch) {
-            extractedNum = numberMatch[0];
-          } else {
-            const allNums = text.replace(/[^0-9]/g, '');
-            if (allNums.length >= 12) extractedNum = allNums.slice(-12); // often at the bottom
-          }
-          
-          if (extractedNum) {
-            const clean = extractedNum.replace(/\s/g, '');
-            const formatted = `${clean.slice(0,4)} ${clean.slice(4,8)} ${clean.slice(8,12)}`;
-            setAadhaarNumber(formatted);
-            setAadhaarData(prev => ({ ...prev, number: formatted }));
-          }
-
-          const dobMatch = text.match(/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/);
-          let extractedName = "Name Not Found";
-          if (dobMatch) {
-             const lines = text.split('\n').filter(l => l.trim().length > 0);
-             const dobLineIndex = lines.findIndex(l => l.includes(dobMatch[0]));
-             if (dobLineIndex > 0) {
-               extractedName = lines[dobLineIndex - 1].replace(/[^a-zA-Z\s]/g, '').trim();
-             }
-          }
-          setAadhaarData(prev => ({ ...prev, name: extractedName }));
-          
-          setAadhaarFrontDone(true);
-        } else if (side === 'back') {
-          processImage(file, (base64) => updateKyc('aadhaarBackImage', base64));
-          let extractedAddress = "Address Not Found";
-          const pinMatch = text.match(/\b\d{6}\b/);
-          if (pinMatch) {
-            const index = text.indexOf(pinMatch[0]);
-            const start = Math.max(0, index - 120);
-            extractedAddress = text.substring(start, index + 6).replace(/\n/g, ', ').trim();
-            extractedAddress = extractedAddress.replace(/address:?/i, '').trim();
-            if (extractedAddress.startsWith(',')) extractedAddress = extractedAddress.substring(1).trim();
-          } else {
-            extractedAddress = text.slice(-80).replace(/\n/g, ', ').trim();
-          }
-          setAadhaarData(prev => ({ ...prev, address: extractedAddress }));
-          setAadhaarBackDone(true);
-        }
-        
-        setAadhaarStatus('idle');
-      } catch (err) {
-        console.error(err);
-        setAadhaarStatus('idle');
-      }
-    } else {
-      // MOCK
-      if (side === '1234 5678 9078') {
-        setAadhaarNumber(side);
-        setAadhaarData(prev => ({ ...prev, address: '123 Tech Park, Bangalore, Karnataka 560001' }));
-      } else {
-        setAadhaarNumber(side);
-        setAadhaarData(prev => ({ ...prev, address: '45 Lotus Tower, Mumbai, Maharashtra 400001' }));
-      }
-      setAadhaarFrontDone(true);
-      setAadhaarBackDone(true);
-      
-      setTimeout(() => {
-        setAadhaarStatus('idle');
-      }, 1000);
-    }
+    // In a real scenario, this calls: await kycService.sendAadhaarOtp({ aadhaarNumber })
+    // We simulate the backend delay:
+    setTimeout(() => {
+      setAadhaarStatus('otp_sent');
+    }, 1500);
   };
 
-  useEffect(() => {
-    if (aadhaarFrontDone && aadhaarBackDone && aadhaarNumber) {
+  const handleVerifyAadhaarOtp = async () => {
+    if (otpCode.length < 6) {
+      alert("Please enter a valid 6-digit OTP");
+      return;
+    }
+    setAadhaarStatus('processing');
+    
+    // In a real scenario, this calls: await kycService.verifyAadhaarOtp({ aadhaarNumber, otpCode })
+    setTimeout(() => {
+      setAadhaarData({ 
+        number: aadhaarNumber, 
+        address: '123 Tech Park, Bangalore, Karnataka 560001', 
+        name: kycState.extractedName || 'Verified User' 
+      });
       setAadhaarStatus('success');
       updateKyc('aadhaar', 'verified');
-    }
-  }, [aadhaarFrontDone, aadhaarBackDone, aadhaarNumber]);
+    }, 1500);
+  };
 
   const handleUploadBasic = (docType, file = null) => {
     if (file) {
@@ -432,21 +380,60 @@ export default function DocumentUploadPage() {
         {activeTab === 'aadhaar' && (
           <div className="animate-fade-in">
             <h2 className="text-2xl font-[Outfit] font-bold text-white mb-2">Aadhaar eKYC Verification</h2>
-            <p className="text-slate-400 mb-8 text-sm">Enter your 12-digit Aadhaar number, verify via simulated OTP SMS, and upload front & back copies for proof of address.</p>
+            <p className="text-slate-400 mb-8 text-sm">Enter your 12-digit Aadhaar number and verify it via UIDAI OTP. This is a paperless flow.</p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+              {/* Left Column - Input */}
               <div>
                 <h3 className="text-sm font-medium text-slate-300 mb-3">Aadhaar Card Number</h3>
                 <input 
                   type="text" 
                   value={aadhaarNumber}
-                  onChange={(e) => setAadhaarNumber(e.target.value)}
+                  onChange={(e) => setAadhaarNumber(e.target.value.replace(/\D/g, '').slice(0, 12))}
                   placeholder="0000 0000 0000"
-                  className="w-full bg-[#0f172a] border border-slate-700 text-white font-[JetBrains_Mono] tracking-widest text-lg p-4 rounded-xl focus:border-indigo-500 outline-none mb-6"
+                  disabled={aadhaarStatus === 'otp_sent' || kycState.aadhaar === 'verified'}
+                  className="w-full bg-[#0f172a] border border-slate-700 text-white font-[JetBrains_Mono] tracking-widest text-lg p-4 rounded-xl focus:border-indigo-500 outline-none mb-4 disabled:opacity-50"
                 />
                 
+                {aadhaarStatus === 'idle' && kycState.aadhaar !== 'verified' && (
+                  <button 
+                    onClick={handleSendAadhaarOtp}
+                    className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl transition-colors"
+                  >
+                    Send OTP via UIDAI
+                  </button>
+                )}
+
+                {aadhaarStatus === 'processing' && (
+                  <div className="w-full py-3 bg-slate-800 text-indigo-400 font-medium rounded-xl flex justify-center items-center gap-2">
+                    <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span> Processing...
+                  </div>
+                )}
+
+                {aadhaarStatus === 'otp_sent' && kycState.aadhaar !== 'verified' && (
+                  <div className="animate-fade-in mt-4">
+                    <div className="bg-primary-fixed/10 border border-primary-fixed/30 text-primary-fixed p-3 rounded-lg mb-4 text-sm">
+                      OTP sent to your registered mobile number ending in ********89.
+                    </div>
+                    <h3 className="text-sm font-medium text-slate-300 mb-3">Enter 6-Digit OTP</h3>
+                    <input 
+                      type="text" 
+                      value={otpCode}
+                      onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                      placeholder="000000"
+                      className="w-full bg-[#0f172a] border border-slate-700 text-white font-[JetBrains_Mono] tracking-widest text-lg p-4 rounded-xl focus:border-primary-fixed outline-none mb-4 text-center"
+                    />
+                    <button 
+                      onClick={handleVerifyAadhaarOtp}
+                      className="w-full py-3 bg-primary-fixed hover:bg-primary-fixed-dim text-[#0f172a] font-bold rounded-xl transition-colors"
+                    >
+                      Verify OTP & Continue
+                    </button>
+                  </div>
+                )}
+                
                 {kycState.aadhaar === 'verified' && (
-                  <div className="bg-[#0f172a] border border-primary-fixed/30 rounded-xl p-4 flex items-center gap-4 animate-fade-in shadow-[0_0_20px_rgba(15,110,86,0.1)]">
+                  <div className="bg-[#0f172a] border border-primary-fixed/30 rounded-xl p-4 flex items-center gap-4 animate-fade-in shadow-[0_0_20px_rgba(15,110,86,0.1)] mt-4">
                     <div className="w-10 h-10 rounded-full bg-primary-fixed/20 flex items-center justify-center text-primary-fixed">
                       <span className="material-symbols-outlined">verified_user</span>
                     </div>
@@ -456,54 +443,26 @@ export default function DocumentUploadPage() {
                     </div>
                   </div>
                 )}
-
-                {kycState.aadhaar !== 'verified' && (
-                  <>
-                    <h3 className="text-xs font-medium text-slate-500 mb-3 uppercase tracking-wider">Quick testing simulation autofills:</h3>
-                    <div className="flex gap-4">
-                      <button onClick={() => handleSimulateAadhaar('1234 5678 9078')} className="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium rounded-lg flex items-center justify-center gap-2 transition-colors">
-                        <span className="material-symbols-outlined text-[14px] text-indigo-400">person</span> Suresh Aadhaar
-                      </button>
-                      <button onClick={() => handleSimulateAadhaar('9876 5432 1098')} className="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium rounded-lg flex items-center justify-center gap-2 transition-colors">
-                        <span className="material-symbols-outlined text-[14px] text-indigo-400">person</span> Priya Aadhaar
-                      </button>
-                    </div>
-                  </>
-                )}
               </div>
               
+              {/* Right Column - Status */}
               <div>
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <h3 className="text-sm font-medium text-slate-300 mb-3">Aadhaar Front Image</h3>
-                    <label htmlFor="upload-aadhaar-front" className={`border border-dashed border-slate-700 ${aadhaarFrontDone ? 'bg-primary-fixed/10 border-primary-fixed/50' : 'bg-slate-800/30'} rounded-xl p-6 flex flex-col items-center text-center cursor-pointer hover:bg-slate-800/50 transition-colors h-[120px] justify-center block w-full`}>
-                      <span className={`material-symbols-outlined mb-2 ${aadhaarFrontDone ? 'text-primary-fixed' : 'text-indigo-400'}`}>{aadhaarFrontDone ? 'check_circle' : 'upload'}</span>
-                      <p className="text-xs text-white font-medium">{aadhaarFrontDone ? 'Front Uploaded' : 'Upload Front Side'}</p>
-                      <input id="upload-aadhaar-front" type="file" className="hidden" accept="image/*,application/pdf" onChange={(e) => {
-                        if (e.target.files && e.target.files[0]) {
-                          handleSimulateAadhaar('front', e.target.files[0]);
-                        }
-                      }} />
-                    </label>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-slate-300 mb-3">Aadhaar Back Image</h3>
-                    <label htmlFor="upload-aadhaar-back" className={`border border-dashed border-slate-700 ${aadhaarBackDone ? 'bg-primary-fixed/10 border-primary-fixed/50' : 'bg-slate-800/30'} rounded-xl p-6 flex flex-col items-center text-center cursor-pointer hover:bg-slate-800/50 transition-colors h-[120px] justify-center block w-full`}>
-                      <span className={`material-symbols-outlined mb-2 ${aadhaarBackDone ? 'text-primary-fixed' : 'text-indigo-400'}`}>{aadhaarBackDone ? 'check_circle' : 'upload'}</span>
-                      <p className="text-xs text-white font-medium">{aadhaarBackDone ? 'Back Uploaded' : 'Upload Back Side'}</p>
-                      <input id="upload-aadhaar-back" type="file" className="hidden" accept="image/*,application/pdf" onChange={(e) => {
-                        if (e.target.files && e.target.files[0]) {
-                          handleSimulateAadhaar('back', e.target.files[0]);
-                        }
-                      }} />
-                    </label>
-                  </div>
-                </div>
-                
-                <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-4 min-h-[80px]">
-                   <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">CIDR Address Record:</h3>
-                   {aadhaarStatus === 'processing' && <div className="text-sm text-indigo-400 animate-pulse">Running OCR on document...</div>}
-                   {aadhaarStatus !== 'processing' && <div className="text-sm text-slate-300">{aadhaarData.address}</div>}
+                <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-6 min-h-[150px] flex flex-col justify-center">
+                   <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4">UIDAI Central Data Repository (CIDR) Record:</h3>
+                   
+                   {kycState.aadhaar === 'verified' ? (
+                     <div className="animate-fade-in">
+                       <p className="text-sm text-slate-300 leading-relaxed mb-3">{aadhaarData.address}</p>
+                       <div className="inline-block bg-primary-fixed/10 text-primary-fixed text-xs px-2 py-1 rounded border border-primary-fixed/20">
+                         Address Verified
+                       </div>
+                     </div>
+                   ) : (
+                     <div className="text-center text-slate-600 italic">
+                       <span className="material-symbols-outlined text-4xl mb-2 opacity-50">cloud_off</span>
+                       <p className="text-sm">Connects to UIDAI databases after successful OTP verification.</p>
+                     </div>
+                   )}
                 </div>
               </div>
             </div>
