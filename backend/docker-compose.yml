@@ -11,3 +11,36 @@ services:
     env_file:
       - .env
     restart: unless-stopped
+services:
+
+  mongodb:
+    image: mongo:7
+    container_name: mf-mongodb
+
+    restart: always
+
+    ports:
+      - "27017:27017"
+
+    volumes:
+      - mongo_data:/data/db
+
+  auth-service:
+    build:
+      context: ./user-service
+
+    container_name: user-service
+
+    restart: always
+
+    ports:
+      - "4000:4000"
+
+    env_file:
+      - ./user-service/.env
+
+    depends_on:
+      - mongodb
+
+volumes:
+  mongo_data:
