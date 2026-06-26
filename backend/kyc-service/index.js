@@ -1,5 +1,6 @@
 require('dns').setServers(['8.8.8.8', '8.8.4.4']);
 require('dotenv').config();
+const connectDB = require('./config/db');
 
 const express = require('express');
 const mongoose = require('mongoose');
@@ -28,14 +29,11 @@ app.get('/', (req, res) => {
 });
 
 // ================= DB & SERVER =================
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => {
-        console.log('🚀 MongoDB connected successfully');
-        app.listen(PORT, () => {
-            console.log(`🔥 KYC Microservice live on port ${PORT}`);
-        });
-    })
-    .catch((err) => console.error('❌ MongoDB connection error:', err));
+connectDB().then(() => {
+    app.listen(PORT, () => {
+        console.log(`🔥 KYC Microservice live on port ${PORT}`);
+    });
+});
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
