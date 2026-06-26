@@ -35,3 +35,39 @@ exports.extractPanData = async (req, res) => {
     res.status(500).json({ success: false, message: 'OCR processing failed.' });
   }
 };
+
+exports.validatePan = async (req, res) => {
+    try {
+        const { panNumber, userId } = req.body;
+        
+        if (!panNumber || !userId) {
+            return res.status(400).json({ success: false, message: "PAN and UserID required for validation" });
+        }
+
+        // Yahan tumhara actual validation logic ya third-party API call aayega
+        res.status(200).json({ success: true, message: "PAN Validated Successfully (Mocked)" });
+        
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server error during PAN validation" });
+    }
+};exports.validatePan = async (req, res) => {
+    try {
+        const { panNumber, userId } = req.body;
+
+        if (!panNumber || !userId) {
+            return res.status(400).json({ success: false, message: "PAN and UserID are required." });
+        }
+
+        // Asli production app mein yahan NSDL/Gov API call hoti, abhi hum mock kar rahe hain
+        res.status(200).json({
+            success: true,
+            message: "PAN Validated Successfully",
+            data: { 
+                isValid: true, 
+                verificationStatus: "VERIFIED" 
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server error during PAN validation." });
+    }
+};
