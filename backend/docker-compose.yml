@@ -11,7 +11,6 @@ services:
     env_file:
       - .env
     restart: unless-stopped
-services:
 
   mongodb:
     image: mongo:7
@@ -39,6 +38,18 @@ services:
     env_file:
       - ./user-service/.env
 
+    depends_on:
+      - mongodb
+
+  notification-service:
+    build:
+      context: ./notification-service
+    container_name: notification-service
+    restart: always
+    ports:
+      - "4005:4005"
+    env_file:
+      - ./notification-service/.env
     depends_on:
       - mongodb
 
