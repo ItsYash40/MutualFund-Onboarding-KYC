@@ -182,58 +182,32 @@ The platform features two distinct portals:
 ## 📁 Project Structure
 
 ```
-fundfirst/
-├── public/                     # Static assets
-├── src/
-│   ├── assets/                 # Images, icons, media files
-│   ├── components/             # Shared/reusable UI components
-│   │   ├── BottomNavBar.jsx    #   Mobile bottom navigation
-│   │   ├── Footer.jsx          #   Marketing page footer
-│   │   ├── RouteGuards.jsx     #   Auth & KYC route protection (5 guards)
-│   │   ├── SideNavBar.jsx      #   Dashboard sidebar navigation
-│   │   ├── SipCalculatorModal.jsx  # SIP calculator modal widget
-│   │   └── TopNavBar.jsx       #   Marketing top navigation bar
-│   │
-│   ├── context/                # React Context providers
-│   │   ├── AuthContext.jsx     #   Auth, KYC state, admin state management
-│   │   └── ThemeContext.jsx    #   Dark/light mode toggle
-│   │
-│   ├── layouts/                # Page layout wrappers
-│   │   ├── AdminLayout.jsx     #   Admin panel layout
-│   │   ├── DashboardLayout.jsx #   Investor dashboard layout (sidebar + content)
-│   │   └── MarketingLayout.jsx #   Public marketing pages layout (topnav + footer)
-│   │
-│   ├── pages/                  # Route-level page components
-│   │   ├── PremiumLandingPage.jsx    # Main marketing landing page (/)
-│   │   ├── LandingPage.jsx           # Alternate landing (/landing)
-│   │   ├── OnboardingDashboard.jsx   # Pre-auth onboarding overview (/onboarding)
-│   │   ├── LoginPage.jsx             # User login (/login)
-│   │   ├── SignUpPage.jsx            # Step 1: Sign up form (/signup)
-│   │   ├── SignUpOtpPage.jsx         # Step 2: OTP verification (/signup/otp)
-│   │   ├── OtpVerificationPage.jsx   # Generic OTP page (/verify-otp)
-│   │   ├── SetPasswordPage.jsx       # Step 3: Set password (/set-password)
-│   │   ├── KycCenterPage.jsx         # KYC hub with status cards (/kyc)
-│   │   ├── DocumentUploadPage.jsx    # Multi-tab document upload (/documents)
-│   │   ├── KycStatusPage.jsx         # KYC review status tracker (/kyc/status)
-│   │   ├── InvestorDashboard.jsx     # Main dashboard (/dashboard)
-│   │   ├── BankVerificationPage.jsx  # Bank account linking (/bank-verification)
-│   │   ├── FundDiscoveryPage.jsx     # Fund catalog & comparison (/funds)
-│   │   ├── ProfileSetupPage.jsx      # User profile & settings (/setup-profile)
-│   │   ├── LearnPage.jsx             # Educational content (/learn)
-│   │   ├── NotificationsPage.jsx     # Notification center (/notifications)
-│   │   └── admin/
-│   │       ├── AdminLogin.jsx        # Admin login (/admin/login)
-│   │       └── AdminDashboard.jsx    # Admin KYC review panel (/admin)
-│   │
-│   ├── App.jsx                 # Root component with router configuration
-│   ├── App.css                 # Global component styles & animations
-│   ├── index.css               # Tailwind imports & M3 design tokens
-│   └── main.jsx                # Application entry point
+MutualFund-Onboarding-KYC/
+├── backend/                    # Node.js microservices
+│   ├── admin-service/          # Admin review API
+│   ├── document-service/       # Document upload & storage API
+│   ├── kyc-service/            # KYC verification API
+│   ├── user-service/           # Auth & user management API
+│   └── docker-compose.yml      # Local backend orchestration
 │
-├── index.html                  # HTML shell with font/icon CDN links
-├── package.json                # Dependencies and scripts
-├── vite.config.js              # Vite build configuration
-└── .oxlintrc.json              # Linter configuration
+├── frontend/                   # React SPA (Vite)
+│   ├── public/                 # Static assets
+│   ├── src/
+│   │   ├── assets/             # Images, icons, media files
+│   │   ├── components/         # Shared/reusable UI components
+│   │   ├── context/            # React Context providers
+│   │   ├── layouts/            # Page layout wrappers
+│   │   ├── pages/              # Route-level page components
+│   │   ├── App.jsx             # Root component with router configuration
+│   │   ├── App.css             # Global component styles & animations
+│   │   ├── index.css           # Tailwind imports & M3 design tokens
+│   │   └── main.jsx            # Application entry point
+│   ├── index.html              # HTML shell with font/icon CDN links
+│   ├── package.json            # Dependencies and scripts
+│   ├── vite.config.js          # Vite build configuration
+│   └── .oxlintrc.json          # Linter configuration
+│
+└── README.md
 ```
 
 ---
@@ -313,8 +287,8 @@ flowchart LR
 # 1. Clone the repository
 git clone https://github.com/your-org/fundfirst.git
 
-# 2. Navigate to the project directory
-cd fundfirst
+# 2. Navigate to the frontend directory
+cd fundfirst/frontend
 
 # 3. Install dependencies
 npm install
@@ -544,7 +518,7 @@ We love contributions! Whether it's fixing a typo, improving documentation, or b
 
 # 2. Clone your fork
 git clone https://github.com/YOUR_USERNAME/fundfirst.git
-cd fundfirst
+cd fundfirst/frontend
 
 # 3. Create a feature branch
 git checkout -b feature/your-feature-name

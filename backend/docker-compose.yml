@@ -1,60 +1,60 @@
 version: '3.8'
 
 services:
-  kyc-backend:
-    build: 
-      context: .
-      dockerfile: Dockerfile
-    container_name: kyc-microservice
-    ports:
-      - "4002:4002"
-    env_file:
-      - .env
-    restart: unless-stopped
-services:
   mongodb:
     image: mongo:7
     container_name: mf-mongodb
-
     restart: always
-
     ports:
       - "27017:27017"
-
     volumes:
       - mongo_data:/data/db
 
   user-service:
     build:
       context: ./user-service
-
     container_name: user-service
-
     restart: always
-
     ports:
       - "4000:4000"
-
     env_file:
       - ./user-service/.env
+    depends_on:
+      - mongodb
 
+  kyc-service:
+    build:
+      context: ./kyc-service
+    container_name: kyc-microservice
+    restart: unless-stopped
+    ports:
+      - "4002:4002"
+    env_file:
+      - ./kyc-service/.env
     depends_on:
       - mongodb
 
   document-service:
     build:
       context: ./document-service
-
     container_name: document-service
-
     restart: always
-
     ports:
       - "4003:4003"
-
     env_file:
       - ./document-service/.env
+    depends_on:
+      - mongodb
 
+  admin-service:
+    build:
+      context: ./admin-service
+    container_name: admin-service
+    restart: always
+    ports:
+      - "4004:4004"
+    env_file:
+      - ./admin-service/.env
     depends_on:
       - mongodb
 
