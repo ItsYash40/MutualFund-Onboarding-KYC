@@ -5,6 +5,7 @@ export default function AdminDashboard() {
   const { kycState, approveKyc, rejectKyc, user } = useAuth();
   const [selectedUser, setSelectedUser] = useState(null);
   const [viewingDoc, setViewingDoc] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // For demonstration, we simulate a list of users.
   // In reality, this would be fetched from a backend.
@@ -197,10 +198,20 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <header className="flex justify-between items-end">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
           <h1 className="text-3xl font-[Outfit] text-white font-bold mb-2">Pending Applications</h1>
           <p className="text-slate-400">Review and verify investor KYC documents.</p>
+        </div>
+        <div className="relative w-full md:w-80">
+          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+          <input 
+            type="text" 
+            placeholder="Search users by name..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-[#1e293b] border border-slate-700 text-white pl-10 pr-4 py-2 rounded-lg focus:border-primary-fixed outline-none transition-colors"
+          />
         </div>
       </header>
 

@@ -7,7 +7,6 @@ import { PublicRoute, ProtectedRoute, KycRoute, DashboardRoute, AdminRoute } fro
 
 // Lazy-load pages for code splitting
 const PremiumLandingPage = lazy(() => import('./pages/PremiumLandingPage'))
-const LandingPage = lazy(() => import('./pages/LandingPage'))
 const OnboardingDashboard = lazy(() => import('./pages/OnboardingDashboard'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 const SignUpPage = lazy(() => import('./pages/SignUpPage'))
@@ -49,7 +48,6 @@ const router = createBrowserRouter([
     element: <MarketingLayout />,
     children: [
       { path: '/', element: <SuspenseWrap><PremiumLandingPage /></SuspenseWrap> },
-      { path: '/landing', element: <SuspenseWrap><LandingPage /></SuspenseWrap> },
       { path: '/learn', element: <SuspenseWrap><LearnPage /></SuspenseWrap> },
       { 
         element: <PublicRoute />, 
