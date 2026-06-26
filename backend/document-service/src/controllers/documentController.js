@@ -4,9 +4,13 @@ import Document from "../models/Document.js";
 /**
  * Generic Upload
  */
+import Document from "../models/Document.js";
+
 export const uploadDocument = async (req, res) => {
   try {
     const { kycId, documentType } = req.body;
+
+    const userId = req.user.userId;
 
     if (!kycId || !documentType) {
       return res.status(400).json({
@@ -21,17 +25,12 @@ export const uploadDocument = async (req, res) => {
         message: "File is required",
       });
     }
+
     const existingDocument = await Document.findOne({
+      userId,
       kycId,
       documentType,
     });
-
-    if (existingDocument) {
-      return res.status(409).json({
-        success: false,
-        message: "Document already exists. Use replace API.",
-      });
-    }
 
     if (existingDocument) {
       return res.status(409).json({
@@ -41,8 +40,10 @@ export const uploadDocument = async (req, res) => {
     }
 
     const document = await Document.create({
+      userId,
       kycId,
       documentType,
+
       originalName: req.file.originalname,
       fileName: req.file.filename,
       filePath: req.file.path,
