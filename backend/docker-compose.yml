@@ -1,3 +1,16 @@
+version: '3.8'
+
+services:
+  kyc-backend:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: kyc-microservice
+    ports:
+      - "4002:4002"
+    env_file:
+      - .env
+    restart: unless-stopped
 services:
 
   mongodb:
