@@ -34,6 +34,8 @@ const upload = multer({
 
 router.post('/draft', authMiddleware, draftController.saveDraft);
 router.post('/pan', upload.single('panCard'), panController.extractPanData);
+router.post('/pan/validate', panController.validatePan); 
+
 router.post('/aadhar/send-otp', otpLimiter, aadharController.sendOtp);
 router.post('/aadhar/verify-otp', aadharController.verifyOtp);
 
@@ -44,4 +46,9 @@ router.post('/submit', [
     checkValidationErrors 
 ], submitController.finalSubmit);
 
+// ================= GET ROUTES (KYC STATUS & DETAILS) =================
+router.get('/kyc-status', submitController.getKycStatus); 
+router.get('/:kycId', submitController.getKycDetails);
+
+// Export sabse aakhir mein aana chahiye!
 module.exports = router;
