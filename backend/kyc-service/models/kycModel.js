@@ -4,11 +4,14 @@ const kycSchema = new mongoose.Schema({
     userId: { 
         type: String, 
         required: true,
-        unique: true // Ek user ek hi baar KYC karega
+        unique: true 
     },
     panNumber: { 
         type: String, 
         required: true 
+    },
+    panImageUrl: { 
+        type: String // OCR image read karne ke liye iski zaroorat padegi
     },
     aadharDetails: {
         name: String,
@@ -17,8 +20,12 @@ const kycSchema = new mongoose.Schema({
     },
     kycStatus: { 
         type: String, 
-        enum: ['PENDING', 'DRAFT', 'COMPLETED', 'REJECTED'],
+        // 'APPROVED' status add kiya hai admin ke liye
+        enum: ['PENDING', 'DRAFT', 'COMPLETED', 'APPROVED', 'REJECTED'],
         default: 'PENDING'
+    },
+    adminRemarks: {
+        type: String // Reject hone par Admin reason yahan daalega
     },
     submittedAt: {
         type: Date,
